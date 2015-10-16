@@ -171,7 +171,7 @@
              (apply-hooks user-context .emit (EmitInfo. values stream task-id out-tasks))
              (when (emit-sampler)
                (for [i (range 0 (count out-tasks))]
-                 (stats/e2e-transferred-tuples! executor-stats (.getComponentId worker-context (second (out-tasks i)))))
+			     (stats/e2e-transferred-tuples! executor-stats (.getComponentId worker-context (second (out-tasks i)))))
                (stats/emitted-tuple! executor-stats stream)
                (builtin-metrics/emitted-tuple! (:builtin-metrics task-data) executor-stats stream)              
                (stats/transferred-tuples! executor-stats stream (count out-tasks))

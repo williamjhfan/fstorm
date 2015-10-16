@@ -24,7 +24,7 @@
 (defn sort-slots [all-slots]
   (let [split-up (sort-by count > (vals (group-by first all-slots)))]
 ;;    (apply interleave-all split-up)
-    (apply concat split-up)
+	  (apply concat split-up)
     ))
 
 (defn get-alive-assigned-node+port->executors [cluster topology-id]
