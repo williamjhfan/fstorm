@@ -35,6 +35,43 @@
     </testResources>
     <plugins>
       <plugin>
+        <groupId>com.theoryinpractise</groupId>
+        <artifactId>clojure-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>compile-clojure</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-clojure</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test-with-junit</goal>
+            </goals>
+            <configuration>
+              <vmargs>${test.extra.args}</vmargs>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectories>
+            <sourceDirectory>src/clj</sourceDirectory>
+          </sourceDirectories>
+          <testSourceDirectories>
+            <testSourceDirectory>test/clj</testSourceDirectory>
+          </testSourceDirectories>
+          <warnOnReflection>false</warnOnReflection>
+          <copyDeclaredNamespaceOnly>true</copyDeclaredNamespaceOnly>
+          <copiedNamespaces>
+            <copiedNamespace>none</copiedNamespace>
+          </copiedNamespaces>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-surefire-report-plugin</artifactId>
         <configuration>
           <reportsDirectories>

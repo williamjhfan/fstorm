@@ -181,6 +181,7 @@
   (CommonStats.
     (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
     (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
+    (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
     rate))
 
 (defn mk-bolt-stats
@@ -218,9 +219,9 @@
   [stats stream amt]
   (update-executor-stat! stats [:common :transferred] stream (* (stats-rate stats) amt)))
 
-(defn e2e-transferred-tuples!
-  [stats target-component-id]
-  (update-executor-stat! stats [:common :e2e_transferred] target-component-id (stats-rate stats)))
+(defn e2etransferred-tuples!
+  [stats comp_id amt]
+  (update-executor-stat! stats [:common :e2e_transferred] comp_id (* (stats-rate stats) amt)))
 
 (defn bolt-execute-tuple!
   [^BoltExecutorStats stats component stream latency-ms]
@@ -343,4 +344,5 @@
   (let [specific-stats (thriftify-specific-stats stats)]
     (ExecutorStats. (window-set-converter (:emitted stats))
                     (window-set-converter (:transferred stats))
+                    (window-set-converter (:e2e_transferred stats))
                     specific-stats)))

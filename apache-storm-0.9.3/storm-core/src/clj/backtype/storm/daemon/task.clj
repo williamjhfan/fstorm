@@ -148,11 +148,10 @@
             (when (emit-sampler)
               (builtin-metrics/emitted-tuple! (:builtin-metrics task-data) executor-stats stream)
               (stats/emitted-tuple! executor-stats stream)
-              (stats/e2e-transferred-tuples! executor-stats target-component)
               (if out-task-id
+                (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context out-task-id) 1))
                 (stats/transferred-tuples! executor-stats stream 1)
-                (stats/e2e-transferred-tuples! executor-stats target-component)
-                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream 1)))
+                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream 1))
             (if out-task-id [out-task-id])
             ))
         ([^String stream ^List values]
@@ -170,12 +169,13 @@
                    )))
              (apply-hooks user-context .emit (EmitInfo. values stream task-id out-tasks))
              (when (emit-sampler)
-               (for [i (range 0 (count out-tasks))]
-			     (stats/e2e-transferred-tuples! executor-stats (.getComponentId worker-context (second (out-tasks i)))))
                (stats/emitted-tuple! executor-stats stream)
                (builtin-metrics/emitted-tuple! (:builtin-metrics task-data) executor-stats stream)              
                (stats/transferred-tuples! executor-stats stream (count out-tasks))
                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream (count out-tasks)))
+               (for [i (range 0 (count out-tasks))]
+			     (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context (second (out-tasks i))) 1))
+               
              out-tasks)))
     ))
 
