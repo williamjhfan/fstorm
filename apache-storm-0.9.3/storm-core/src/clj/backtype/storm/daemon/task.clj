@@ -149,9 +149,10 @@
               (builtin-metrics/emitted-tuple! (:builtin-metrics task-data) executor-stats stream)
               (stats/emitted-tuple! executor-stats stream)
               (if out-task-id
-                (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context out-task-id) 1))
                 (stats/transferred-tuples! executor-stats stream 1)
                 (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream 1))
+              (if out-task-id
+                (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context out-task-id) 1)))
             (if out-task-id [out-task-id])
             ))
         ([^String stream ^List values]
