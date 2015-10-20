@@ -15,22 +15,16 @@
 ;; limitations under the License.
 (ns backtype.storm.daemon.task
   (:use [backtype.storm.daemon common])
-  (:use [backtype.storm config util log])
+  (:use [backtype.storm bootstrap])
   (:import [backtype.storm.hooks ITaskHook])
-  (:import [backtype.storm.tuple Tuple TupleImpl])
-  (:import [backtype.storm.generated SpoutSpec Bolt StateSpoutSpec StormTopology])
+  (:import [backtype.storm.tuple Tuple])
+  (:import [backtype.storm.generated SpoutSpec Bolt StateSpoutSpec])
   (:import [backtype.storm.hooks.info SpoutAckInfo SpoutFailInfo
             EmitInfo BoltFailInfo BoltAckInfo])
-  (:import [backtype.storm.task TopologyContext ShellBolt WorkerTopologyContext])
-  (:import [backtype.storm.utils Utils])
-  (:import [backtype.storm.generated ShellComponent JavaObject])
-  (:import [backtype.storm.spout ShellSpout])
-  (:import [java.util Collection List ArrayList])
-  (:require [backtype.storm
-             [tuple :as tuple]
-             [thrift :as thrift]
-             [stats :as stats]])
+  (:require [backtype.storm [tuple :as tuple]])
   (:require [backtype.storm.daemon.builtin-metrics :as builtin-metrics]))
+
+(bootstrap)
 
 (defn mk-topology-context-builder [worker executor-data topology]
   (let [conf (:conf worker)]
@@ -67,7 +61,7 @@
     (:topology worker))
    tid))
 
-(defn- get-task-object [^StormTopology topology component-id]
+(defn- get-task-object [^TopologyContext topology component-id]
   (let [spouts (.get_spouts topology)
         bolts (.get_bolts topology)
         state-spouts (.get_state_spouts topology)
@@ -150,9 +144,7 @@
               (stats/emitted-tuple! executor-stats stream)
               (if out-task-id
                 (stats/transferred-tuples! executor-stats stream 1)
-                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream 1))
-              (if out-task-id
-                (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context out-task-id) 1)))
+                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream 1)))
             (if out-task-id [out-task-id])
             ))
         ([^String stream ^List values]
@@ -174,9 +166,6 @@
                (builtin-metrics/emitted-tuple! (:builtin-metrics task-data) executor-stats stream)              
                (stats/transferred-tuples! executor-stats stream (count out-tasks))
                (builtin-metrics/transferred-tuple! (:builtin-metrics task-data) executor-stats stream (count out-tasks)))
-               (for [i (range 0 (count out-tasks))]
-			     (stats/e2etransferred-tuples! executor-stats (.getComponentId worker-context (second (out-tasks i))) 1))
-               
              out-tasks)))
     ))
 

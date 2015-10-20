@@ -161,8 +161,8 @@
 ;;         :else (* 10 (to-proportional-bucket (ceil (/ val 10))
 ;;                                             buckets))))
 
-(def COMMON-FIELDS [:emitted :transferred :e2e_transferred])
-(defrecord CommonStats [emitted transferred e2e_transferred rate])
+(def COMMON-FIELDS [:emitted :transferred])
+(defrecord CommonStats [emitted transferred rate])
 
 (def BOLT-FIELDS [:acked :failed :process-latencies :executed :execute-latencies])
 ;;acked and failed count individual tuples
@@ -179,7 +179,6 @@
 (defn- mk-common-stats
   [rate]
   (CommonStats.
-    (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
     (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
     (atom (apply keyed-counter-rolling-window-set NUM-STAT-BUCKETS STAT-BUCKETS))
     rate))
@@ -218,10 +217,6 @@
 (defn transferred-tuples!
   [stats stream amt]
   (update-executor-stat! stats [:common :transferred] stream (* (stats-rate stats) amt)))
-
-(defn e2etransferred-tuples!
-  [stats comp_id amt]
-  (update-executor-stat! stats [:common :e2e_transferred] comp_id (* (stats-rate stats) amt)))
 
 (defn bolt-execute-tuple!
   [^BoltExecutorStats stats component stream latency-ms]
@@ -344,5 +339,4 @@
   (let [specific-stats (thriftify-specific-stats stats)]
     (ExecutorStats. (window-set-converter (:emitted stats))
                     (window-set-converter (:transferred stats))
-                    (window-set-converter (:e2e_transferred stats))
                     specific-stats)))

@@ -16,6 +16,7 @@
 (ns backtype.storm.scheduler.DefaultScheduler
   (:use [backtype.storm util config])
   (:require [backtype.storm.scheduler.EvenScheduler :as EvenScheduler])
+  (:import [backtype.storm.generated Nimbus Nimbus$Processor Nimbus$Iface ])
   (:import [backtype.storm.scheduler IScheduler Topologies
             Cluster TopologyDetails WorkerSlot SchedulerAssignment
             EvenScheduler ExecutorDetails])
@@ -73,5 +74,17 @@
       (.freeSlots cluster bad-slots)
       (EvenScheduler/schedule-topologies-evenly (Topologies. {topology-id topology}) cluster))))
 
-(defn -schedule [this ^Topologies topologies ^Cluster cluster]
-  (default-schedule topologies cluster))
+(defn fstorm-default-schedule [^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
+  (let [needs-scheduling-topologies (.needsSchedulingTopologies cluster topologies)
+        used-slots (.getUsedSlots cluster)]
+    (.freeSlots cluster used-slots)
+    (doseq [^TopologyDetails topology needs-scheduling-topologies
+            :let [topology-id (.getId topology)]]
+    (EvenScheduler/schedule-topologies-evenly (Topologies. {topology-id topology}) cluster nimbus))))
+
+(defn -schedule 
+  ([this ^Topologies topologies ^Cluster cluster]
+    (default-schedule topologies cluster))
+  ([this ^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
+    (fstorm-default-schedule topologies cluster nimbus))
+    )

@@ -44,20 +44,17 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
   private static final org.apache.thrift.protocol.TField EMITTED_FIELD_DESC = new org.apache.thrift.protocol.TField("emitted", org.apache.thrift.protocol.TType.MAP, (short)1);
   private static final org.apache.thrift.protocol.TField TRANSFERRED_FIELD_DESC = new org.apache.thrift.protocol.TField("transferred", org.apache.thrift.protocol.TType.MAP, (short)2);
   private static final org.apache.thrift.protocol.TField SPECIFIC_FIELD_DESC = new org.apache.thrift.protocol.TField("specific", org.apache.thrift.protocol.TType.STRUCT, (short)3);
-  private static final org.apache.thrift.protocol.TField E2E_TRANSFERRED_FIELD_DESC = new org.apache.thrift.protocol.TField("e2e_transferred", org.apache.thrift.protocol.TType.MAP, (short)5);
 
   private Map<String,Map<String,Long>> emitted; // required
   private Map<String,Map<String,Long>> transferred; // required
-  private Map<String,Map<String,Long>> e2e_transferred; //required
   private ExecutorSpecificStats specific; // required
 
   /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
   public enum _Fields implements org.apache.thrift.TFieldIdEnum {
     EMITTED((short)1, "emitted"),
     TRANSFERRED((short)2, "transferred"),
-    SPECIFIC((short)3, "specific"),
-	E2E_TRANSFERRED((short)5, "e2e_transferred");
-	  
+    SPECIFIC((short)3, "specific");
+
     private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
     static {
@@ -77,8 +74,6 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
           return TRANSFERRED;
         case 3: // SPECIFIC
           return SPECIFIC;
-        case 5: //e2e_transferred
-          return E2E_TRANSFERRED;
         default:
           return null;
       }
@@ -135,13 +130,6 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
             new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
                 new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
                 new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)))));
-    tmpMap.put(_Fields.E2E_TRANSFERRED, new org.apache.thrift.meta_data.FieldMetaData("e2e_transferred", org.apache.thrift.TFieldRequirementType.REQUIRED, 
-            new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-                new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
-                new org.apache.thrift.meta_data.MapMetaData(org.apache.thrift.protocol.TType.MAP, 
-                    new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.STRING), 
-                    new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)))));
-    
     tmpMap.put(_Fields.SPECIFIC, new org.apache.thrift.meta_data.FieldMetaData("specific", org.apache.thrift.TFieldRequirementType.REQUIRED, 
         new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, ExecutorSpecificStats.class)));
     metaDataMap = Collections.unmodifiableMap(tmpMap);
@@ -154,14 +142,12 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
   public ExecutorStats(
     Map<String,Map<String,Long>> emitted,
     Map<String,Map<String,Long>> transferred,
-    ExecutorSpecificStats specific,
-    Map<String,Map<String,Long>> e2e_transferred)
+    ExecutorSpecificStats specific)
   {
     this();
     this.emitted = emitted;
     this.transferred = transferred;
     this.specific = specific;
-    this.e2e_transferred = e2e_transferred;
   }
 
   /**
@@ -220,34 +206,6 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
       }
       this.transferred = __this__transferred;
     }
-    
-    if (other.is_set_e2e_transferred()) {
-        Map<String,Map<String,Long>> __this__e2e_transferred = new HashMap<String,Map<String,Long>>();
-        for (Map.Entry<String, Map<String,Long>> other_element : other.e2e_transferred.entrySet()) {
-
-          String other_element_key = other_element.getKey();
-          Map<String,Long> other_element_value = other_element.getValue();
-
-          String __this__e2e_transferred_copy_key = other_element_key;
-
-          Map<String,Long> __this__e2e_transferred_copy_value = new HashMap<String,Long>();
-          for (Map.Entry<String, Long> other_element_value_element : other_element_value.entrySet()) {
-
-            String other_element_value_element_key = other_element_value_element.getKey();
-            Long other_element_value_element_value = other_element_value_element.getValue();
-
-            String __this__e2e_transferred_copy_value_copy_key = other_element_value_element_key;
-
-            Long __this__e2e_transferred_copy_value_copy_value = other_element_value_element_value;
-
-            __this__e2e_transferred_copy_value.put(__this__e2e_transferred_copy_value_copy_key, __this__e2e_transferred_copy_value_copy_value);
-          }
-
-          __this__e2e_transferred.put(__this__e2e_transferred_copy_key, __this__e2e_transferred_copy_value);
-        }
-        this.e2e_transferred = __this__e2e_transferred;
-      }
-    
     if (other.is_set_specific()) {
       this.specific = new ExecutorSpecificStats(other.specific);
     }
@@ -262,7 +220,6 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
     this.emitted = null;
     this.transferred = null;
     this.specific = null;
-    this.e2e_transferred=null;
   }
 
   public int get_emitted_size() {
@@ -333,41 +290,6 @@ public class ExecutorStats implements org.apache.thrift.TBase<ExecutorStats, Exe
     }
   }
 
-  public int get_e2e_transferred_size() {
-	    return (this.e2e_transferred == null) ? 0 : this.e2e_transferred.size();
-	  }
-
-public void put_to_e2e_transferred(String key, Map<String,Long> val) {
-	    if (this.e2e_transferred == null) {
-	      this.e2e_transferred = new HashMap<String,Map<String,Long>>();
-	    }
-	    this.e2e_transferred.put(key, val);
-	  }
-	  
-
-public Map<String, Map<String, Long>> get_e2e_transferred() {
-	return e2e_transferred;
-}
-
-public void set_e2e_transferred(Map<String, Map<String, Long>> e2e_transferred) {
-	this.e2e_transferred = e2e_transferred;
-}
-
-public void unset_e2e_transferred() {
-  this.e2e_transferred = null;
-}
-
-/** Returns true if field transferred is set (has been assigned a value) and false otherwise */
-public boolean is_set_e2e_transferred() {
-  return this.e2e_transferred != null;
-}
-
-public void set_e2e_transferred_isSet(boolean value) {
-  if (!value) {
-    this.e2e_transferred = null;
-  }
-}
-  
   public ExecutorSpecificStats get_specific() {
     return this.specific;
   }
@@ -416,14 +338,7 @@ public void set_e2e_transferred_isSet(boolean value) {
         set_specific((ExecutorSpecificStats)value);
       }
       break;
-      
-    case E2E_TRANSFERRED:
-        if (value == null) {
-          unset_e2e_transferred();
-        } else {
-          set_e2e_transferred((Map<String,Map<String,Long>>)value);
-        }
-        break; 
+
     }
   }
 
@@ -438,9 +353,6 @@ public void set_e2e_transferred_isSet(boolean value) {
     case SPECIFIC:
       return get_specific();
 
-    case E2E_TRANSFERRED:
-        return get_e2e_transferred();  
-      
     }
     throw new IllegalStateException();
   }
@@ -458,8 +370,6 @@ public void set_e2e_transferred_isSet(boolean value) {
       return is_set_transferred();
     case SPECIFIC:
       return is_set_specific();
-    case E2E_TRANSFERRED:
-        return is_set_e2e_transferred(); 
     }
     throw new IllegalStateException();
   }
@@ -495,15 +405,6 @@ public void set_e2e_transferred_isSet(boolean value) {
         return false;
     }
 
-    boolean this_present_e2e_transferred = true && this.is_set_e2e_transferred();
-    boolean that_present_e2e_transferred = true && that.is_set_e2e_transferred();
-    if (this_present_e2e_transferred || that_present_e2e_transferred) {
-      if (!(this_present_e2e_transferred && that_present_e2e_transferred))
-        return false;
-      if (!this.e2e_transferred.equals(that.e2e_transferred))
-        return false;
-    }
-    
     boolean this_present_specific = true && this.is_set_specific();
     boolean that_present_specific = true && that.is_set_specific();
     if (this_present_specific || that_present_specific) {
@@ -530,11 +431,6 @@ public void set_e2e_transferred_isSet(boolean value) {
     if (present_transferred)
       builder.append(transferred);
 
-    boolean present_e2e_transferred = true && (is_set_e2e_transferred());
-    builder.append(present_e2e_transferred);
-    if (present_e2e_transferred)
-      builder.append(transferred);
-    
     boolean present_specific = true && (is_set_specific());
     builder.append(present_specific);
     if (present_specific)
@@ -567,16 +463,6 @@ public void set_e2e_transferred_isSet(boolean value) {
     }
     if (is_set_transferred()) {
       lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.transferred, typedOther.transferred);
-      if (lastComparison != 0) {
-        return lastComparison;
-      }
-    }
-    lastComparison = Boolean.valueOf(is_set_e2e_transferred()).compareTo(other.is_set_e2e_transferred());
-    if (lastComparison != 0) {
-      return lastComparison;
-    }
-    if (is_set_e2e_transferred()) {
-      lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.e2e_transferred, other.e2e_transferred);
       if (lastComparison != 0) {
         return lastComparison;
       }
@@ -670,37 +556,6 @@ public void set_e2e_transferred_isSet(boolean value) {
             org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
           }
           break;
-        case 5: // E2E_TRANSFERRED
-            if (field.type == org.apache.thrift.protocol.TType.MAP) {
-              {
-                org.apache.thrift.protocol.TMap _map141 = iprot.readMapBegin();
-                this.transferred = new HashMap<String,Map<String,Long>>(2*_map141.size);
-                for (int _i142 = 0; _i142 < _map141.size; ++_i142)
-                {
-                  String _key143; // required
-                  Map<String,Long> _val144; // required
-                  _key143 = iprot.readString();
-                  {
-                    org.apache.thrift.protocol.TMap _map145 = iprot.readMapBegin();
-                    _val144 = new HashMap<String,Long>(2*_map145.size);
-                    for (int _i146 = 0; _i146 < _map145.size; ++_i146)
-                    {
-                      String _key147; // required
-                      long _val148; // required
-                      _key147 = iprot.readString();
-                      _val148 = iprot.readI64();
-                      _val144.put(_key147, _val148);
-                    }
-                    iprot.readMapEnd();
-                  }
-                  this.e2e_transferred.put(_key143, _val144);
-                }
-                iprot.readMapEnd();
-              }
-            } else { 
-              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, field.type);
-            }
-            break;
         case 3: // SPECIFIC
           if (field.type == org.apache.thrift.protocol.TType.STRUCT) {
             this.specific = new ExecutorSpecificStats();
@@ -764,27 +619,6 @@ public void set_e2e_transferred_isSet(boolean value) {
       }
       oprot.writeFieldEnd();
     }
-    if (this.e2e_transferred != null) {
-        oprot.writeFieldBegin(E2E_TRANSFERRED_FIELD_DESC);
-        {
-          oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.MAP, this.e2e_transferred.size()));
-          for (Map.Entry<String, Map<String,Long>> _iter145 : this.e2e_transferred.entrySet())
-          {
-            oprot.writeString(_iter145.getKey());
-            {
-              oprot.writeMapBegin(new org.apache.thrift.protocol.TMap(org.apache.thrift.protocol.TType.STRING, org.apache.thrift.protocol.TType.I64, _iter145.getValue().size()));
-              for (Map.Entry<String, Long> _iter146 : _iter145.getValue().entrySet())
-              {
-                oprot.writeString(_iter146.getKey());
-                oprot.writeI64(_iter146.getValue());
-              }
-              oprot.writeMapEnd();
-            }
-          }
-          oprot.writeMapEnd();
-        }
-        oprot.writeFieldEnd();
-      }
     if (this.specific != null) {
       oprot.writeFieldBegin(SPECIFIC_FIELD_DESC);
       this.specific.write(oprot);
@@ -815,14 +649,6 @@ public void set_e2e_transferred_isSet(boolean value) {
     }
     first = false;
     if (!first) sb.append(", ");
-    sb.append("e2e_transferred:");
-    if (this.e2e_transferred == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.e2e_transferred);
-    }
-    first = false;
-    if (!first) sb.append(", ");
     sb.append("specific:");
     if (this.specific == null) {
       sb.append("null");
@@ -844,10 +670,6 @@ public void set_e2e_transferred_isSet(boolean value) {
       throw new org.apache.thrift.protocol.TProtocolException("Required field 'transferred' is unset! Struct:" + toString());
     }
 
-    if (!is_set_e2e_transferred()) {
-        throw new org.apache.thrift.protocol.TProtocolException("Required field 'e2e_transferred' is unset! Struct:" + toString());
-      }
-    
     if (!is_set_specific()) {
       throw new org.apache.thrift.protocol.TProtocolException("Required field 'specific' is unset! Struct:" + toString());
     }
