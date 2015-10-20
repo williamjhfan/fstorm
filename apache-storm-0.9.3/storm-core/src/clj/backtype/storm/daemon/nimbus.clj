@@ -1034,7 +1034,7 @@
 (defserverfn service-handler [conf inimbus]
   (.prepare inimbus conf (master-inimbus-dir conf))
   (log-message "Starting Nimbus with conf " conf)
-  (let [nimbus (nimbus-data conf inimbus) time-cnt 0]
+  (let [nimbus (nimbus-data conf inimbus)]
     (.prepare ^backtype.storm.nimbus.ITopologyValidator (:validator nimbus) conf)
     (cleanup-corrupt-topologies! nimbus)
     (doseq [storm-id (.active-storms (:storm-cluster-state nimbus))]
@@ -1045,10 +1045,18 @@
                         (fn []
                           (when (conf NIMBUS-REASSIGN)
                             (locking (:submit-lock nimbus)
-                              (if (= (rem (inc time-cnt) 30) 0)
-                                (fstorm-mk-assignments nimbus)
                                 (mk-assignments nimbus)  
-                              )))
+                              ))
+                          (do-cleanup nimbus)
+                          ))
+    (schedule-recurring (:timer nimbus)
+                        0
+                        100
+                        (fn []
+                          (when (conf NIMBUS-REASSIGN)
+                            (locking (:submit-lock nimbus)
+                                (fstorm-mk-assignments nimbus)
+                              ))
                           (do-cleanup nimbus)
                           ))
     ;; Schedule Nimbus inbox cleaner
