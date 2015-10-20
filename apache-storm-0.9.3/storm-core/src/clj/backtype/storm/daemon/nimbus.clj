@@ -707,6 +707,7 @@
 ;; only keep existing slots that satisfy one of those slots. for rest, reassign them across remaining slots
 ;; edge case for slots with no executor timeout but with supervisor timeout... just treat these as valid slots that can be reassigned to. worst comes to worse the executor will timeout and won't assign here next time around
 (defnk mk-assignments [nimbus :scratch-topology-id nil]
+  (log-message "normal-mk-assignments called ")
   (let [conf (:conf nimbus)
         storm-cluster-state (:storm-cluster-state nimbus)
         ^INimbus inimbus (:inimbus nimbus) 
@@ -779,6 +780,7 @@
     ))
 
 (defnk fstorm-mk-assignments [nimbus :scratch-topology-id nil]
+  (log-message "fstorm-mk-assignments called ")
   (let [conf (:conf nimbus)
         storm-cluster-state (:storm-cluster-state nimbus)
         ^INimbus inimbus (:inimbus nimbus) 
@@ -1044,8 +1046,8 @@
                           (when (conf NIMBUS-REASSIGN)
                             (locking (:submit-lock nimbus)
                               (if (= (rem (inc time-cnt) 30) 0)
-                                (mk-assignments nimbus)
-                                (fstorm-mk-assignments nimbus)  
+                                (fstorm-mk-assignments nimbus)
+                                (mk-assignments nimbus)  
                               )))
                           (do-cleanup nimbus)
                           ))
