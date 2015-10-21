@@ -128,7 +128,10 @@
                                 
         reassign-slots (take total-slots-to-use
                              (sort-slots available-slots))
-        reassign-executors (keys (sort-by val > executor-transferred))
+        sorted-executors (if (nil? executor-transferred) [] (keys (sort-by val executor-transferred)))
+        reassign-executors (->> sorted-executors
+                              (map #(vector (.getStartTask %) (.getEndTask %)))
+                              set)
         reassignment (into {}
                            (map vector
                                 reassign-executors
