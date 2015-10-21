@@ -19,8 +19,41 @@
   (:import [backtype.storm.generated Nimbus Nimbus$Processor Nimbus$Iface Nimbus$Client])
   (:import [backtype.storm.scheduler IScheduler Topologies
             Cluster TopologyDetails WorkerSlot ExecutorDetails])
+  (:use compojure.core)
+  (:use ring.middleware.reload)
+  (:use [hiccup core page-helpers])
+  (:use [backtype.storm config util log])
+  (:use [backtype.storm.ui helpers])
+  (:use [backtype.storm.daemon [common :only [ACKER-COMPONENT-ID ACKER-INIT-STREAM-ID
+                                              ACKER-ACK-STREAM-ID ACKER-FAIL-STREAM-ID system-id?]]])
+  (:use [ring.adapter.jetty :only [run-jetty]])
+  (:use [clojure.string :only [trim]])
+  (:import [backtype.storm.utils Utils])
+  (:import [backtype.storm.generated ExecutorSpecificStats
+            ExecutorStats ExecutorSummary TopologyInfo SpoutStats BoltStats
+            ErrorInfo ClusterSummary SupervisorSummary TopologySummary
+            Nimbus$Client StormTopology GlobalStreamId RebalanceOptions
+            KillOptions])
+  (:import [java.io File])
+  (:require [compojure.route :as route]
+            [compojure.handler :as handler]
+            [ring.util.response :as resp]
+            [backtype.storm [thrift :as thrift]])
+  (:import [org.apache.commons.lang StringEscapeUtils])
   (:gen-class
     :implements [backtype.storm.scheduler.IScheduler]))
+
+(def ^:dynamic *STORM-CONF* (read-storm-config))
+
+(defmacro with-nimbus
+  [nimbus-sym & body]
+  `(thrift/with-nimbus-connection
+     [~nimbus-sym (*STORM-CONF* NIMBUS-HOST) (*STORM-CONF* NIMBUS-THRIFT-PORT)]
+     ~@body))
+
+(defn get_topologyinfo [tid]
+  (with-nimbus nimbus
+    (.getNimbusConf ^Nimbus$Client nimbus tid)))
 
 (defn sort-slots [all-slots]
   (let [split-up (sort-by count > (vals (group-by first all-slots)))]
@@ -66,10 +99,10 @@
       ))
     reassignment))
 
-(defn- fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster ^Nimbus nimbus]
+(defn- fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster]
   (let [topology-id (.getId topology)
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
-        tinfo (.getTopologyInfo nimbus topology-id)
+        tinfo (get_topologyinfo)
         eslist (.get_executors tinfo)
         componentId-transferred (->> eslist
               (apply hash-map 
@@ -118,11 +151,11 @@
         (.assign cluster slot topology-id executors)))))
 
 
-(defn fstorm-schedule-topologies-evenly [^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
+(defn fstorm-schedule-topologies-evenly [^Topologies topologies ^Cluster cluster]
   (let [needs-scheduling-topologies (.needsSchedulingTopologies cluster topologies)]
     (doseq [^TopologyDetails topology needs-scheduling-topologies
             :let [topology-id (.getId topology)
-                  new-assignment (fstorm-schedule-topology topology cluster nimbus)
+                  new-assignment (fstorm-schedule-topology topology cluster)
                   node+port->executors (reverse-map new-assignment)]]
       (doseq [[node+port executors] node+port->executors
               :let [^WorkerSlot slot (WorkerSlot. (first node+port) (last node+port))

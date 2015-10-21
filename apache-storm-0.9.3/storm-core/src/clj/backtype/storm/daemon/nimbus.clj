@@ -650,7 +650,7 @@
 
         ;; call scheduler.schedule to schedule all the topologies
         ;; the new assignments for all the topologies are in the cluster object.
-        _ (.fstorm-default-schedule (:scheduler nimbus) topologies cluster nimbus)
+        _ (.fstorm-default-schedule (:scheduler nimbus) topologies cluster)
         new-scheduler-assignments (.getAssignments cluster)
         ;; add more information to convert SchedulerAssignment to Assignment
         new-topology->executor->node+port (compute-topology->executor->node+port new-scheduler-assignments)]
