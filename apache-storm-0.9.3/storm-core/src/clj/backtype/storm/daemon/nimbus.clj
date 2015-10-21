@@ -1044,7 +1044,7 @@
                         0
                         (conf NIMBUS-MONITOR-FREQ-SECS)
                         (fn []
-                          (when (conf NIMBUS-REASSIGN)
+                          (when (* (conf NIMBUS-REASSIGN) 10)
                             (locking (:submit-lock nimbus)
                                 (fstorm-mk-assignments nimbus)  
                               ))

@@ -53,6 +53,7 @@
   )
 
 (defn default-schedule [^Topologies topologies ^Cluster cluster]
+  (log-message "enter fstorm-default-schedule ")
   (let [needs-scheduling-topologies (.needsSchedulingTopologies cluster topologies)]
     (doseq [^TopologyDetails topology needs-scheduling-topologies
             :let [topology-id (.getId topology)
@@ -78,11 +79,11 @@
   (log-message "enter fstorm-default-schedule ")
   (let [needs-scheduling-topologies (.needsSchedulingTopologies cluster topologies)
         used-slots (.getUsedSlots cluster)]
-    (.freeSlots cluster used-slots)
-    (doseq [^TopologyDetails topology needs-scheduling-topologies
+      (.freeSlots cluster used-slots)
+      (doseq [^TopologyDetails topology needs-scheduling-topologies
             :let [topology-id (.getId topology)]]
-    (EvenScheduler/fstorm-schedule-topologies-evenly (Topologies. {topology-id topology}) cluster))))
-
+              (EvenScheduler/fstorm-schedule-topologies-evenly (Topologies. {topology-id topology}) cluster))))
+    
 (defn -schedule 
   [this ^Topologies topologies ^Cluster cluster]
     (log-message "enter default scheduler ")

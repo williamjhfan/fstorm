@@ -99,16 +99,17 @@
       ))
     reassignment))
 
-(defn- fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster]
+(defn fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster]
   (let [topology-id (.getId topology)
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
         tinfo (get_topologyinfo topology-id)
         eslist (.get_executors tinfo)
-        componentId-transferred (apply hash-map 
+        componentId-transferred (if (nil? eslist) {} 
+                                (apply hash-map 
                                   (apply concat 
                                     (->> eslist
                                       (map 
-                                        #(vector (.get_component_id %) (reduce + (vals (get (.get_transferred (.get_stats %)) "all-time"))))))))
+                                        #(vector (.get_component_id %) (reduce + (vals (get (.get_transferred (.get_stats %)) "all-time")))))))))
         available-slots (->> (.getAvailableSlots cluster)
                              (map #(vector (.getNodeId %) (.getPort %))))
 
