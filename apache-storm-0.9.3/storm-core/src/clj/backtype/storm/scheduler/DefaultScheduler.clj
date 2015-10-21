@@ -87,4 +87,4 @@
 (defn -schedule 
   [this ^Topologies topologies ^Cluster cluster]
     (log-message "enter default scheduler ")
-    (fstorm-default-schedule topologies cluster))
+    (default-schedule topologies cluster))
