@@ -104,7 +104,7 @@
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
         tinfo (get_topologyinfo topology-id)
         eslist (.get_executors tinfo)
-        componentId-transferred (if (nil? eslist) {} 
+        componentId-transferred (if (= (count eslist) 0) {} 
                                 (apply hash-map 
                                   (apply concat 
                                     (->> eslist
