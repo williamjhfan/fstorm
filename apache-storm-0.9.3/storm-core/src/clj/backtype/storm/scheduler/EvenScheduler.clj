@@ -53,7 +53,7 @@
 
 (defn get_topologyinfo [tid]
   (with-nimbus nimbus
-    (.getNimbusConf ^Nimbus$Client nimbus tid)))
+    (.getTopologyInfo ^Nimbus$Client nimbus tid)))
 
 (defn sort-slots [all-slots]
   (let [split-up (sort-by count > (vals (group-by first all-slots)))]
