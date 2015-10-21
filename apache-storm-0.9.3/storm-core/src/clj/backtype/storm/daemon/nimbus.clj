@@ -1042,9 +1042,9 @@
       (transition! nimbus storm-id :startup))
     (schedule-recurring (:timer nimbus)
                         0
-                        (conf NIMBUS-MONITOR-FREQ-SECS)
+                        (* (conf NIMBUS-MONITOR-FREQ-SECS) 10)
                         (fn []
-                          (when (* (conf NIMBUS-REASSIGN) 10)
+                          (when (conf NIMBUS-REASSIGN)
                             (locking (:submit-lock nimbus)
                                 (fstorm-mk-assignments nimbus)  
                               ))
