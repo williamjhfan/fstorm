@@ -102,7 +102,7 @@
 (defn- fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster]
   (let [topology-id (.getId topology)
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
-        tinfo (get_topologyinfo)
+        tinfo (get_topologyinfo topology-id)
         eslist (.get_executors tinfo)
         componentId-transferred (->> eslist
               (apply hash-map 
