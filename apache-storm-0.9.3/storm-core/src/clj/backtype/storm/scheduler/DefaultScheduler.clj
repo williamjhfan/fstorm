@@ -14,7 +14,7 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 (ns backtype.storm.scheduler.DefaultScheduler
-  (:use [backtype.storm util config])
+  (:use [backtype.storm util log config])
   (:require [backtype.storm.scheduler.EvenScheduler :as EvenScheduler])
   (:import [backtype.storm.generated Nimbus Nimbus$Processor Nimbus$Iface ])
   (:import [backtype.storm.scheduler IScheduler Topologies
@@ -75,6 +75,7 @@
       (EvenScheduler/schedule-topologies-evenly (Topologies. {topology-id topology}) cluster))))
 
 (defn fstorm-default-schedule [^Topologies topologies ^Cluster cluster]
+  (log-message "enter fstorm-default-schedule ")
   (let [needs-scheduling-topologies (.needsSchedulingTopologies cluster topologies)
         used-slots (.getUsedSlots cluster)]
     (.freeSlots cluster used-slots)
@@ -84,4 +85,5 @@
 
 (defn -schedule 
   [this ^Topologies topologies ^Cluster cluster]
+    (log-message "enter default scheduler ")
     (fstorm-default-schedule topologies cluster))

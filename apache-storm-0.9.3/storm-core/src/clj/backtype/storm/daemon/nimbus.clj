@@ -609,6 +609,7 @@
     new-topology->executor->node+port))
 
 (defn fstorm-compute-new-topology->executor->node+port [nimbus existing-assignments topologies scratch-topology-id]
+  (log-message "enter fstorm-compute-new-topology->executor->node+port ")
   (let [conf (:conf nimbus)
         storm-cluster-state (:storm-cluster-state nimbus)
         topology->executors (compute-topology->executors nimbus (keys existing-assignments))
@@ -650,7 +651,7 @@
 
         ;; call scheduler.schedule to schedule all the topologies
         ;; the new assignments for all the topologies are in the cluster object.
-        _ (default-schedule (:scheduler nimbus) topologies cluster)
+        _ (.schedule (:scheduler nimbus) topologies cluster)
         new-scheduler-assignments (.getAssignments cluster)
         ;; add more information to convert SchedulerAssignment to Assignment
         new-topology->executor->node+port (compute-topology->executor->node+port new-scheduler-assignments)]
