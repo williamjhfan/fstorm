@@ -84,4 +84,4 @@
 
 (defn -schedule 
   [this ^Topologies topologies ^Cluster cluster]
-    (default-schedule topologies cluster))
+    (fstorm-default-schedule topologies cluster))
