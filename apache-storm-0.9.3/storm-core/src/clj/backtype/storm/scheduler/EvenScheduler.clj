@@ -120,11 +120,12 @@
                                 (count available-slots)) 2)
         step (/ (count all-executors) total-slots-to-use)
         executor-componentId (.getExecutorToComponent topology)
-        executor-transferred (->> executor-componentId
-                                (apply hash-map 
-                                  (apply concat 
-                                    (map 
-                                      #(hash-map (key %) (get componentId-transferred (val %)))))))
+        executor-transferred (apply hash-map 
+                                  (apply concat
+                                    (->> executor-componentId 
+                                      (map 
+                                        #(vector (key %) (get componentId-transferred (val %)))))))
+                                
         reassign-slots (take total-slots-to-use
                              (sort-slots available-slots))
         reassign-executors (keys (sort-by val > (executor-transferred)))
