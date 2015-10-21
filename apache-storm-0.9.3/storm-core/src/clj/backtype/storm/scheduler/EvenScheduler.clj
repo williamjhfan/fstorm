@@ -69,7 +69,7 @@
 (defn- fstorm-schedule-topology [^TopologyDetails topology ^Cluster cluster ^Nimbus nimbus]
   (let [topology-id (.getId topology)
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
-        tinfo (.getTopologyInfo ^Nimbus$Client nimbus topology-id)
+        tinfo (.getTopologyInfo nimbus topology-id)
         eslist (.get_executors tinfo)
         componentId-transferred (->> eslist
               (apply hash-map 
@@ -94,7 +94,7 @@
                                       #(hash-map (key %) (get componentId-transferred (val %)))))))
         reassign-slots (take total-slots-to-use
                              (sort-slots available-slots))
-        reassign-executors (sort-by val > (executor-transferred))
+        reassign-executors (keys (sort-by val > (executor-transferred)))
         reassignment (into {}
                            (map vector
                                 reassign-executors

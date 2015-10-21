@@ -80,11 +80,8 @@
     (.freeSlots cluster used-slots)
     (doseq [^TopologyDetails topology needs-scheduling-topologies
             :let [topology-id (.getId topology)]]
-    (EvenScheduler/schedule-topologies-evenly (Topologies. {topology-id topology}) cluster nimbus))))
+    (EvenScheduler/fstorm-schedule-topologies-evenly (Topologies. {topology-id topology}) cluster nimbus))))
 
 (defn -schedule 
-  ([this ^Topologies topologies ^Cluster cluster]
-    (default-schedule topologies cluster))
-  ([this ^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
+  [this ^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
     (fstorm-default-schedule topologies cluster nimbus))
-    )
