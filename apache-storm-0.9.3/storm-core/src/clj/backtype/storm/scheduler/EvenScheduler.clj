@@ -128,7 +128,7 @@
                                 
         reassign-slots (take total-slots-to-use
                              (sort-slots available-slots))
-        reassign-executors (keys (sort-by val > (executor-transferred)))
+        reassign-executors (keys (sort-by val > executor-transferred))
         reassignment (into {}
                            (map vector
                                 reassign-executors
