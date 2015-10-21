@@ -104,11 +104,11 @@
       ;topologyinfo (if (nil? nimbus) (.getTopologyInfo nimbus topology-id) nil)
         tinfo (get_topologyinfo topology-id)
         eslist (.get_executors tinfo)
-        componentId-transferred (->> eslist
-              (apply hash-map 
-                (apply concat 
-                  (map 
-                    #(hash-map (.get_component_id %) (reduce + (vals (get (.get_transferred (.get_stats %)) "all-time"))))))))
+        componentId-transferred (apply hash-map 
+                                  (apply concat 
+                                    (->> eslist
+                                      (map 
+                                        #(vector (.get_component_id %) (reduce + (vals (get (.get_transferred (.get_stats %)) "all-time"))))))))
         available-slots (->> (.getAvailableSlots cluster)
                              (map #(vector (.getNodeId %) (.getPort %))))
 
