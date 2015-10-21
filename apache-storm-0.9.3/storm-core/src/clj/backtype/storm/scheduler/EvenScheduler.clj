@@ -118,7 +118,7 @@
                           set)
         total-slots-to-use (/ (min (.getNumWorkers topology)
                                 (count available-slots)) 2)
-        step (/ count all-executors total-slots-to-use)
+        step (/ (count all-executors) total-slots-to-use)
         executor-componentId (.getExecutorToComponent topology)
         executor-transferred (->> executor-componentId
                                 (apply hash-map 
