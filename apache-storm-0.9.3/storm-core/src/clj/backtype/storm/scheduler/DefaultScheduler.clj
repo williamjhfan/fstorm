@@ -83,5 +83,5 @@
     (EvenScheduler/fstorm-schedule-topologies-evenly (Topologies. {topology-id topology}) cluster nimbus))))
 
 (defn -schedule 
-  [this ^Topologies topologies ^Cluster cluster ^Nimbus nimbus]
-    (fstorm-default-schedule topologies cluster nimbus))
+  [this ^Topologies topologies ^Cluster cluster]
+    (fstorm-default-schedule topologies cluster))

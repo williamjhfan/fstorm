@@ -18,7 +18,7 @@
 package backtype.storm.scheduler;
 
 import java.util.Map;
-
+import backtype.storm.generated.Nimbus;
 
 public interface IScheduler {
     
